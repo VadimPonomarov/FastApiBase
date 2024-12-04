@@ -3,51 +3,53 @@ package-mode = false
 name = "fastapibase"
 version = "0.1.0"
 description = "BaseFastApiProject"
-authors = ["Вадим <pvs.versia@gmail.com>"]
+authors = ["pvs.versia@gmail.com"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
 fastapi = "^0.115.5"
-uvicorn = {extras = ["standard"], version = "^0.32.1"}
-pydantic = {extras = ["email"], version = "^2.10.3"}
+uvicorn = { extras = ["standard"], version = "^0.32.1" }
+pydantic = { extras = ["email"], version = "^2.10.3" }
 pydantic-settings = "^2.6.1"
 ruff = "^0.8.1"
+isort = "^5.13.2"
 
 [tool.ruff]
-line-length = 120
-exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".git-rewrite",
-    ".hg",
-    ".ipynb_checkpoints",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pyenv",
-    ".pytest_cache",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    ".vscode",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "site-packages",
-    "venv",
-]
+line-length = 88
 
 [tool.lint]
 select = ["E", "W", "F", "I"]
 lint.ignore = ["E203"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+known_thirdparty = ["uvicorn", "pydantic", "pydantic_settings"]
+known_first_party = [
+    "api",
+    "core",
+    "database",
+    "models",
+    "schemas",
+    "tests",
+    "tests_api",
+    "tests_core",
+    "tests_database",
+    "tests_models",
+    "tests_schemas",
+    "tests_tests",
+]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY"]
+default_section = "THIRDPARTY"
+import_heading_stdlib = "Standard Library"
+import_heading_thirdparty = "Third Party"
+import_heading_firstparty = "Project"
+no_lines_before = ["STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+#forced_separate = ["uvicorn"]
 
 [build-system]
 requires = ["poetry-core"]
