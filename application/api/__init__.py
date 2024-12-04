@@ -2,17 +2,14 @@
 from fastapi import APIRouter
 
 # Project Dependencies
+from api.users import router_users
 from core.config import settings
 
 router = APIRouter(
     prefix=settings.api.prefix,
-    tags=["example"],
 )
 
-
-@router.get("/example")
-async def example_route():
-    return {"message": "This is an example route"}
+router.include_router(router_users, tags=["Users"])
 
 
 __all__ = ["router"]
