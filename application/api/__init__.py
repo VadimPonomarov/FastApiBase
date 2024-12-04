@@ -1,7 +1,11 @@
+# Third Party Libraries
 from fastapi import APIRouter
 
+# Project Dependencies
+from core.config import settings
+
 router = APIRouter(
-    prefix="/example",
+    prefix=settings.api.prefix,
     tags=["example"],
 )
 
