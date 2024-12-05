@@ -17,8 +17,8 @@ LOG_DEFAULT_FORMAT = (
 
 
 class RunConfig(BaseModel):
-    host: str = os.environ.get("HOST", "0.0.0.0")
-    port: int = os.environ.get("PORT", 8000)
+    host: str = os.environ.get("APP_CONFIG__HOST", "localhost")
+    port: int = int(os.environ.get("APP_CONFIG__PORT", 8000))
 
 
 class LoggingConfig(BaseModel):
@@ -33,7 +33,7 @@ class LoggingConfig(BaseModel):
 
 
 class ApiPrefix(BaseModel):
-    prefix: str = os.config.get("API_PREFIX", "/api")
+    prefix: str = os.environ.get("APP_CONFIG__API_PREFIX", "/api")
 
 
 class DatabaseConfig(BaseModel):
