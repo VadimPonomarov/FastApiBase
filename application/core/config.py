@@ -1,9 +1,15 @@
-# Standard Library
+# Standard Libraries
+import os
 from typing import Literal
 
-# Third Party
+# Project Dependencies
+from dotenv import load_dotenv
+
+# Third Party Libraries
 from pydantic import BaseModel, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+load_dotenv()
 
 LOG_DEFAULT_FORMAT = (
     "[%(asctime)s.%(msecs)03d] %(module)10s:%(lineno)-3d %(levelname)-7s - %(message)s"
@@ -11,8 +17,8 @@ LOG_DEFAULT_FORMAT = (
 
 
 class RunConfig(BaseModel):
-    host: str = "0.0.0.0"
-    port: int = 8000
+    host: str = os.environ.get("HOST", "0.0.0.0")
+    port: int = os.environ.get("PORT", 8000)
 
 
 class LoggingConfig(BaseModel):
@@ -27,7 +33,7 @@ class LoggingConfig(BaseModel):
 
 
 class ApiPrefix(BaseModel):
-    prefix: str = "/api"
+    prefix: str = os.config.get("API_PREFIX", "/api")
 
 
 class DatabaseConfig(BaseModel):
@@ -56,7 +62,7 @@ class Settings(BaseSettings):
     run: RunConfig = RunConfig()
     logging: LoggingConfig = LoggingConfig()
     api: ApiPrefix = ApiPrefix()
-    # db: DatabaseConfig
+    db: DatabaseConfig
 
 
 settings = Settings()

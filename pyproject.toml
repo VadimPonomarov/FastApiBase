@@ -14,13 +14,15 @@ pydantic = { extras = ["email"], version = "^2.10.3" }
 pydantic-settings = "^2.6.1"
 ruff = "^0.8.1"
 isort = "^5.13.2"
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.36"}
+sqlalchemy = { extras = ["asyncio"], version = "^2.0.36" }
 asyncpg = "^0.30.0"
+pylance = "^0.20.0"
 
 [tool.ruff]
 line-length = 88
 
 [tool.lint]
+line-length = 88
 select = ["E", "W", "F", "I"]
 lint.ignore = ["E203"]
 
@@ -35,7 +37,14 @@ import_heading_stdlib = "Standard Libraries"
 import_heading_thirdparty = "Third Party Libraries"
 import_heading_firstparty = "Project Dependencies"
 known_stdlib = ["os", "typing"]
-known_thirdparty = ["fastapi", "uvicorn", "pydantic", "pydantic_settings"]
+known_thirdparty = [
+    "fastapi",
+    "uvicorn",
+    "pydantic",
+    "pydantic_settings",
+    "sqlalchemy",
+    "asyncpg",
+]
 lines_between_sections = 1
 
 [build-system]
