@@ -1,12 +1,20 @@
 # Standard Libraries
-import os
-from typing import Literal
-
+# Standard Libraries
+# Standard Libraries
+# Standard Libraries
+# Standard Libraries
+# Standard Libraries
+# Standard Libraries
+# Standard Libraries
+# Standard Libraries
 # Project Dependencies
+from abc import ABC
+from typing import Annotated, Literal
+
 from dotenv import load_dotenv
 
 # Third Party Libraries
-from pydantic import BaseModel, PostgresDsn
+from pydantic import BaseModel, Field, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
@@ -16,9 +24,18 @@ LOG_DEFAULT_FORMAT = (
 )
 
 
-class RunConfig(BaseModel):
-    host: str = os.environ.get("APP_CONFIG__HOST", "localhost")
-    port: int = int(os.environ.get("APP_CONFIG__PORT", 8000))
+class BaseSettingsBase(BaseSettings, ABC):
+    model_config = SettingsConfigDict(
+        env_file=(".env.template", ".env"),
+        case_sensitive=False,
+        env_nested_delimiter="__",
+        env_prefix="APP_CONFIG__",
+    )
+
+
+class RunConfig(BaseSettingsBase):
+    host: Annotated[str, Field(default="localhost")]
+    port: Annotated[int, Field(default=8000)]
 
 
 class LoggingConfig(BaseModel):
@@ -32,8 +49,8 @@ class LoggingConfig(BaseModel):
     log_format: str = LOG_DEFAULT_FORMAT
 
 
-class ApiPrefix(BaseModel):
-    prefix: str = os.environ.get("APP_CONFIG__API_PREFIX", "/api")
+class ApiPrefix(BaseSettingsBase):
+    prefix: Annotated[str, Field(default="/api")]
 
 
 class DatabaseConfig(BaseModel):
@@ -52,13 +69,7 @@ class DatabaseConfig(BaseModel):
     }
 
 
-class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=(".env.template", ".env"),
-        case_sensitive=False,
-        env_nested_delimiter="__",
-        env_prefix="APP_CONFIG__",
-    )
+class Settings(BaseSettingsBase):
     run: RunConfig = RunConfig()
     logging: LoggingConfig = LoggingConfig()
     api: ApiPrefix = ApiPrefix()
