@@ -1,21 +1,13 @@
 # Standard Libraries
-# Standard Libraries
-# Standard Libraries
-# Standard Libraries
-# Standard Libraries
-# Standard Libraries
-# Standard Libraries
-# Standard Libraries
-# Standard Libraries
-# Project Dependencies
-from abc import ABC
-from typing import Annotated, Literal
-
 from dotenv import load_dotenv
+from typing import Annotated, Literal
 
 # Third Party Libraries
 from pydantic import BaseModel, Field, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Project Dependencies
+from abc import ABC
 
 load_dotenv()
 
