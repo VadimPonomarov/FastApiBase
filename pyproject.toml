@@ -12,12 +12,12 @@ fastapi = "^0.115.5"
 uvicorn = { extras = ["standard"], version = "^0.32.1" }
 pydantic = { extras = ["email"], version = "^2.10.3" }
 pydantic-settings = "^2.6.1"
-ruff = "^0.8.1"
 isort = "^5.13.2"
 sqlalchemy = { extras = ["asyncio"], version = "^2.0.36" }
 asyncpg = "^0.30.0"
 pylance = "^0.20.0"
 loguru = "^0.7.2"
+alembic = "^1.14.0"
 
 [tool.ruff]
 line-length = 88
@@ -33,23 +33,36 @@ line_length = 88
 multi_line_output = 3
 include_trailing_comma = true
 sections = ["STDLIB", "THIRDPARTY", "FIRSTPARTY"]
+no_lines_before = ["STDLIB", "THIRDPARTY", "FIRSTPARTY"]
 default_section = "FIRSTPARTY"
-import_heading_stdlib = "Standard Libraries"
-import_heading_thirdparty = "Third Party Libraries"
-import_heading_firstparty = "Project Dependencies"
-known_stdlib = ["os", "typing", "dotenv"]
-known_thirdparty = [
+# import_heading_stdlib = "Standard Libraries"
+# import_heading_thirdparty = "Third Party Libraries"
+# import_heading_firstparty = "Project Dependencies"
+known_stdlib = [
+    "os",
+    "sys",
+    "typing",
+    "dotenv",
+    "contextlib",
+    "asyncio",
+    "dataclasses",
+    "datetime",
+    "json",
+    "pathlib",
+    "time",
+    "fastapi",
     "uvicorn",
     "pydantic",
     "pydantic_settings",
     "sqlalchemy",
     "asyncpg",
-    "contextlib",
-    "fastapi",
-    "ruff",
 ]
+known_thirdparty = ["ruff", "pylance", "loguru"]
 lines_between_sections = 1
+
+
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
