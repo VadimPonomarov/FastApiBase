@@ -1,4 +1,3 @@
-# Project Dependencies
 from .config import settings
 from .models import db_helper
 

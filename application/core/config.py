@@ -1,19 +1,13 @@
-# Standard Libraries
-from dotenv import load_dotenv
-from typing import Annotated, Literal
+from abc import ABC
+from typing import Annotated, Any, Literal
 
-# Third Party Libraries
-from pydantic import BaseModel, Field, PostgresDsn
+from loguru import logger
+from pydantic import BaseModel, Field, PostgresDsn, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Project Dependencies
-from abc import ABC
+from core.enums.loguru_enums import LoguruFormat, LoguruSink
 
-load_dotenv()
-
-LOG_DEFAULT_FORMAT = (
-    "[%(asctime)s.%(msecs)03d] %(module)10s:%(lineno)-3d %(levelname)-7s - %(message)s"
-)
+logger.name = "my_loguru_logger"
 
 
 class BaseSettingsBase(BaseSettings, ABC):
@@ -30,15 +24,17 @@ class RunConfig(BaseSettingsBase):
     port: Annotated[int, Field(default=8000)]
 
 
-class LoggingConfig(BaseModel):
-    log_level: Literal[
-        "debug",
-        "info",
-        "warning",
-        "error",
-        "critical",
-    ] = "info"
-    log_format: str = LOG_DEFAULT_FORMAT
+class LoguruConfig(BaseSettingsBase):
+    is_logging: bool | None = True
+
+    @field_validator("is_logging", mode="before")
+    def convert_to_bool(cls, value):
+        if isinstance(value, str):
+            if value.lower() in ["true", "1"]:
+                return bool(True)
+            elif value.lower() in ["false", "0"]:
+                return bool(False)
+        return value
 
 
 class ApiPrefix(BaseSettingsBase):
@@ -63,8 +59,8 @@ class DatabaseConfig(BaseModel):
 
 class Settings(BaseSettingsBase):
     run: RunConfig = RunConfig()
-    logging: LoggingConfig = LoggingConfig()
     api: ApiPrefix = ApiPrefix()
+    loguru: LoguruConfig = LoguruConfig()
     db: DatabaseConfig
 
 
