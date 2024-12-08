@@ -1,5 +1,6 @@
+from typing import Dict, Annotated
+
 from pydantic import Field, PostgresDsn, field_validator
-from typing import Annotated
 from loguru import logger
 from pydantic_settings import SettingsConfigDict, BaseSettings
 
@@ -45,14 +46,18 @@ class DatabaseConfig(BaseSettingsBase):
     echo_pool: bool = False
     pool_size: int = 50
     max_overflow: int = 10
-
-    naming_convention: Annotated[dict[str, str], Field(default={
-        "ix": "ix_%(column_0_label)s",
-        "uq": "uq_%(table_name)s_%(column_0_N_name)s",
-        "ck": "ck_%(table_name)s_%(constraint_name)s",
-        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-        "pk": "pk_%(table_name)s",
-    })]
+    naming_conventions: Annotated[
+        Dict[str, str],
+        Field(
+            default_factory=lambda: {
+                "ix": "ix_%(column_0_label)s",
+                "uq": "uq_%(table_name)s_%(column_0_N_name)s",
+                "ck": "ck_%(table_name)s_%(constraint_name)s",
+                "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+                "pk": "pk_%(table_name)s",
+            }
+        ),
+    ]
 
 
 class Settings(BaseSettingsBase):

@@ -5,7 +5,6 @@ from fastapi import FastAPI
 
 from core.config import settings
 from core.enums.loguru_enums import LoguruFormatEnum
-from models.base import BaseModel
 from models.db_helper import db_helper
 from loguru import logger
 
