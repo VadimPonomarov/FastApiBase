@@ -7,5 +7,5 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.get("")
-async def get_users():
+async def hello():
     return await say_hello()
