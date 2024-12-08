@@ -10,6 +10,7 @@ class CrtUpdDatetimeMixin:
     )
     updated_at = Mapped[datetime.datetime] = mapped_column(
         server_default=text(
-            "TIMEZONE('utc', CURRENT_TIMESTAMP)", onupdate=datetime.datetime.now
+            "TIMEZONE('utc', CURRENT_TIMESTAMP)",
+            onupdate=text("TIMEZONE('utc', CURRENT_TIMESTAMP)"),
         )
     )
