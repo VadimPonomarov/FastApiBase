@@ -6,7 +6,7 @@ from fastapi.responses import ORJSONResponse
 
 from core.config import settings
 from core.enums.loguru_enums import LoguruFormatEnum
-from models.db_helper import db_helper
+from core.db_helper import db_helper
 from loguru import logger
 from api.endpoints import Router
 
