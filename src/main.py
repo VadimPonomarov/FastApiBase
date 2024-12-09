@@ -1,14 +1,15 @@
 import sys
-import uvicorn
 from contextlib import asynccontextmanager
+
+import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-
-from core.config import settings
-from core.enums.loguru_enums import LoguruFormatEnum
-from core.db_helper import db_helper
 from loguru import logger
+
 from api.endpoints import Router
+from core.config import settings
+from core.db_helper import db_helper
+from core.enums.loguru_enums import LoguruFormatEnum
 
 
 @asynccontextmanager

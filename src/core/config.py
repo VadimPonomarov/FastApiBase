@@ -1,11 +1,7 @@
 from typing import Dict, Annotated
 
 from pydantic import Field, PostgresDsn, field_validator
-from loguru import logger
 from pydantic_settings import SettingsConfigDict, BaseSettings
-
-logger.name = "my_loguru_logger"
-
 
 class BaseSettingsBase(BaseSettings):
     __abstract__ = True
@@ -67,4 +63,4 @@ class Settings(BaseSettingsBase):
     db: DatabaseConfig
 
 
-settings = Settings()
+settings = Settings() # type: ignore
