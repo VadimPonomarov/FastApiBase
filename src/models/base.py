@@ -1,4 +1,4 @@
-from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, declared_attr
 
 from utils import camel_case_to_snake_case
 

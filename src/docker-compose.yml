@@ -3,9 +3,9 @@ services:
   db:
     image: postgres:14-alpine
     environment:
-      POSTGRES_DB: "${POSTGRES_DB:-db}"
-      POSTGRES_USER: "${POSTGRES_USER:-user}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-root}"
+      POSTGRES_DB: "${APP_CONFIG__POSTGRES_DB:-db}"
+      POSTGRES_USER: "${APP_CONFIG__POSTGRES_USER:-user}"
+      POSTGRES_PASSWORD: "${APP_CONFIG__POSTGRES_PASSWORD:-root}"
     env_file:
       - .env
     volumes:

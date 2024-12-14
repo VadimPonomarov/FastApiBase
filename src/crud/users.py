@@ -1,4 +1,3 @@
-from pydantic import json
 
 
 async def say_hello():

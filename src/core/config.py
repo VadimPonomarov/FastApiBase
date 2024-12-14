@@ -1,7 +1,8 @@
 from typing import Dict, Annotated
 
-from pydantic import Field, PostgresDsn, field_validator
+from pydantic import Field, field_validator, computed_field, PostgresDsn
 from pydantic_settings import SettingsConfigDict, BaseSettings
+
 
 class BaseSettingsBase(BaseSettings):
     __abstract__ = True
@@ -37,7 +38,12 @@ class ApiPrefix(BaseSettingsBase):
 
 
 class DatabaseConfig(BaseSettingsBase):
-    url: PostgresDsn
+    scheme: str = "postgresql+asyncpg"
+    db: str = "postgres"
+    user: str = "postgres"
+    password: str = "password"
+    db_host: str = "localhost"
+    db_port: int = 5432
     echo: bool = True
     echo_pool: bool = False
     pool_size: int = 50
@@ -55,6 +61,12 @@ class DatabaseConfig(BaseSettingsBase):
         ),
     ]
 
+    @computed_field
+    def url(self) -> PostgresDsn:
+        return PostgresDsn(
+            url=f"{self.scheme}://{self.user}:{self.password}@{self.db_host}:{self.db_port}/{self.db}"
+        )
+
 
 class Settings(BaseSettingsBase):
     run: RunConfig = RunConfig()
@@ -63,4 +75,4 @@ class Settings(BaseSettingsBase):
     db: DatabaseConfig
 
 
-settings = Settings() # type: ignore
+settings = Settings()  # type: ignore
