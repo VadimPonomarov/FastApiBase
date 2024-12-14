@@ -11,6 +11,8 @@ from core.config import settings
 from core.db_helper import db_helper
 from core.enums.loguru_enums import LoguruFormatEnum
 
+app = FastAPI()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
