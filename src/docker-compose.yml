@@ -14,7 +14,7 @@ services:
       - "5431:5432"
 
   rabbitmq:
-    image: rabbitmq:4-management-alpine
+    image: rabbitmq:4.0.4-management
     hostname: rabbitmq
     container_name: rabbitmq
     ports:
