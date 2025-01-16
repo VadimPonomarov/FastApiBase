@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: "${APP_CONFIG__POSTGRES_USER:-user}"
       POSTGRES_PASSWORD: "${APP_CONFIG__POSTGRES_PASSWORD:-root}"
     env_file:
-      - .env
+      - src/.env
     volumes:
       - ./pg_data:/var/lib/postgresql/data
     ports:
