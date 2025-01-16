@@ -1,4 +1,3 @@
-# Third Party Libraries
 from fastapi import APIRouter
 
 from api.users.views import say_hello
