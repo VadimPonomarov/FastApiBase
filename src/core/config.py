@@ -1,7 +1,7 @@
-from typing import Dict, Annotated
+from typing import Annotated, Dict
 
-from pydantic import Field, field_validator, computed_field, PostgresDsn
-from pydantic_settings import SettingsConfigDict, BaseSettings
+from pydantic import Field, PostgresDsn, computed_field, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class BaseSettingsBase(BaseSettings):
