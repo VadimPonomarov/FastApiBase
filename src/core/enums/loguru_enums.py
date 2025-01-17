@@ -1,5 +1,5 @@
-from enum import Enum
 import sys
+from enum import Enum
 from typing import Any, TextIO
 
 

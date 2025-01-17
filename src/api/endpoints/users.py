@@ -2,7 +2,6 @@ from fastapi import APIRouter
 
 from api.users.views import say_hello
 
-
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
