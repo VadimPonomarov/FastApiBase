@@ -2,11 +2,12 @@ import sys
 from contextlib import asynccontextmanager
 
 import uvicorn
+
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from loguru import logger
 
-from api.endpoints import Router
+from api.endpoints.router import router
 from core.config import settings
 from core.db_helper import db_helper
 from core.enums.loguru_enums import LoguruFormatEnum
@@ -26,7 +27,7 @@ async def lifespan(app: FastAPI):
 
 
 main_app = FastAPI(lifespan=lifespan, default_response_class=ORJSONResponse)
-main_app.include_router(Router)
+main_app.include_router(router)
 
 if __name__ == "__main__":
     uvicorn.run(

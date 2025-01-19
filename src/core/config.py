@@ -24,6 +24,7 @@ class LoguruConfig(BaseSettingsBase):
     is_logging: bool = True
 
     @field_validator("is_logging", mode="before")
+    @classmethod
     def convert_to_bool(cls, value):
         if isinstance(value, str):
             if value.lower() in ["true", "1"]:

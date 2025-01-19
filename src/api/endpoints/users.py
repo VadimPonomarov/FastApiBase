@@ -1,10 +1,10 @@
-from fastapi import APIRouter
+from typing import Annotated
 
-from api.users.views import say_hello
+from fastapi import APIRouter, Path
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("")
-async def hello():
-    return await say_hello()
+@router.get("/items/{hello}")
+async def read_item(hello: Annotated[str, Path(default_factory=lambda: "hello")]):
+    return {"hello": hello}
