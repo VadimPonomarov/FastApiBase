@@ -1,6 +1,7 @@
 import sys
 from contextlib import asynccontextmanager
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from loguru import logger
@@ -9,8 +10,6 @@ from api.endpoints.router import router
 from core.db import db_helper
 from core.enums import LoguruFormatEnum
 from core.settings.config import settings
-
-import uvicorn
 
 app = FastAPI()
 

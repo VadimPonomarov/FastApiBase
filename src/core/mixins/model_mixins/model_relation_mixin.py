@@ -2,7 +2,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core.utils import camel_case_to_snake_case
+from core.utils.converters import camel_case_to_snake_case
 
 
 class ModelRelationMixin:
