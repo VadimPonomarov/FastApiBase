@@ -37,6 +37,12 @@ class ApiPrefix(BaseSettingsBase):
     prefix: str = Field(default="/api")
 
 
+class AuthConfig(BaseSettingsBase):
+    login_url: str
+    secret: str
+    token_life: str
+
+
 class DatabaseConfig(BaseSettingsBase):
     url: str
     echo: bool
@@ -61,6 +67,7 @@ class Settings(BaseSettingsBase):
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
     loguru: LoguruConfig = LoguruConfig()
+    auth: AuthConfig = AuthConfig()
     db: DatabaseConfig
 
 
