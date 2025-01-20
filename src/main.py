@@ -7,11 +7,9 @@ from fastapi.responses import ORJSONResponse
 from loguru import logger
 
 from api.endpoints.router import router
-from core.db import db_helper
+from core.config import settings
 from core.enums import LoguruFormatEnum
-from core.settings.config import settings
-
-app = FastAPI()
+from core.utils.db_helper import db_helper
 
 
 @asynccontextmanager
