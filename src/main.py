@@ -1,7 +1,6 @@
-import sys
 from contextlib import asynccontextmanager
+import sys
 
-import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from loguru import logger
@@ -11,10 +10,12 @@ from core.config import settings
 from core.enums import LoguruFormatEnum
 from core.utils.db_helper import db_helper
 
+import uvicorn
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if settings.loguru.is_logging:
+    if settings.loguru:
         logger.remove()
         logger.add(sink=sys.stdout, format=LoguruFormatEnum.BASE.value)
         logger.info("That's it, beautiful and simple logging!")
@@ -23,7 +24,10 @@ async def lifespan(app: FastAPI):
     await db_helper.dispose()
 
 
-main_app = FastAPI(lifespan=lifespan, default_response_class=ORJSONResponse)
+main_app = FastAPI(
+    lifespan=lifespan,
+    default_response_class=ORJSONResponse
+)
 main_app.include_router(router)
 
 if __name__ == "__main__":
@@ -32,4 +36,7 @@ if __name__ == "__main__":
         host=settings.run.host,
         port=settings.run.port,
         reload=True,
+        log_level="error",
     )
+
+    # uvicorn.run(app="main:main_app", host="0.0.0.0", port=8000, reload=True)

@@ -1,7 +1,11 @@
+import os
 from typing import Annotated, Dict
 
-from pydantic import Field, field_validator
+from dotenv import load_dotenv
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+load_dotenv()
 
 
 class BaseSettingsBase(BaseSettings):
@@ -20,27 +24,18 @@ class RunConfig(BaseSettingsBase):
     port: int = Field(default=8000)
 
 
-class LoguruConfig(BaseSettingsBase):
-    is_logging: bool = True
-
-    @field_validator("is_logging", mode="before")
-    def convert_to_bool(cls, value):
-        if isinstance(value, str):
-            if value.lower() in ["true", "1"]:
-                return bool(True)
-            elif value.lower() in ["false", "0"]:
-                return bool(False)
-        return value
-
-
 class ApiPrefix(BaseSettingsBase):
     prefix: str = Field(default="/api")
 
 
 class AuthConfig(BaseSettingsBase):
-    login_url: str
-    secret: str
-    token_life: str
+    login_url: str = Field(
+        default_factory=lambda: os.getenv("APP_CONFIG__AUTH__LOGIN_URL")
+    )
+    secret: str = Field(default_factory=lambda: os.getenv("APP_CONFIG__AUTH__SECRET"))
+    access_token_lifetime: int = Field(
+        default_factory=lambda: int(os.getenv("APP_CONFIG__AUTH__TOKEN_LIFETIME", 3600))
+    )
 
 
 class DatabaseConfig(BaseSettingsBase):
@@ -66,9 +61,9 @@ class DatabaseConfig(BaseSettingsBase):
 class Settings(BaseSettingsBase):
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
-    loguru: LoguruConfig = LoguruConfig()
     auth: AuthConfig = AuthConfig()
     db: DatabaseConfig
+    loguru: bool = Field(default_factory=lambda: os.getenv("APP_CONFIG__LOGURU", False))
 
 
 settings = Settings()  # type: ignore

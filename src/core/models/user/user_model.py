@@ -15,5 +15,5 @@ class User(
     BaseModel, IdIntMixin, CrtUpdDatetimeMixin, SQLAlchemyBaseUserTable[UserIdType]
 ):
     @classmethod
-    async def get_db(session: "AsyncSession"):
+    async def get_db(cls, session: "AsyncSession"):
         yield SQLAlchemyUserDatabase(session, User)
