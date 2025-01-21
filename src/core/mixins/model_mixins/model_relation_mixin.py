@@ -17,6 +17,7 @@ class ModelRelationMixin:
     _related_model_id_unique: bool = False
 
     @declared_attr
+    @classmethod
     def related_model_id(cls) -> Mapped[int]:
         return mapped_column(
             ForeignKey(f"{cls._related_model.__tablename__}.{cls._related_model_id}"),
@@ -25,6 +26,7 @@ class ModelRelationMixin:
         )
 
     @declared_attr
+    @classmethod
     def related_model(cls) -> Mapped[str]:
         back_populates = (
             cls._related_model_back_populates
@@ -36,6 +38,7 @@ class ModelRelationMixin:
         )
 
     @declared_attr
+    @classmethod
     def related_models(cls) -> Mapped[list[str]]:
         back_populates = (
             cls._related_model_back_populates

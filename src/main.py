@@ -4,13 +4,12 @@ import sys
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from loguru import logger
+import uvicorn
 
 from api.endpoints.router import router
 from core.config import settings
 from core.enums import LoguruFormatEnum
 from core.utils.db_helper import db_helper
-
-import uvicorn
 
 
 @asynccontextmanager
@@ -24,10 +23,7 @@ async def lifespan(app: FastAPI):
     await db_helper.dispose()
 
 
-main_app = FastAPI(
-    lifespan=lifespan,
-    default_response_class=ORJSONResponse
-)
+main_app = FastAPI(lifespan=lifespan, default_response_class=ORJSONResponse)
 main_app.include_router(router)
 
 if __name__ == "__main__":
