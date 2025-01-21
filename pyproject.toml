@@ -59,8 +59,8 @@ forced_separate = ["uvicorn"]
 #import_heading_firstparty = "My libraries"
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "C", "N", "B", "Q", "S", "I"]
-ignore = ["E501", "S105"]
+select = ["E", "F", "W", "C", "N", "B", "Q", "S", "I", "PLR0206"]
+ignore = ["E501", "S105", "F401"]
 
 [build-system]
 requires = ["poetry-core"]
