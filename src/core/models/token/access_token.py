@@ -22,7 +22,7 @@ class AccessToken(
     ModelRelationMixin,
     SQLAlchemyBaseAccessTokenTable[UserIdType],
 ):
-    _related_models = User
+    _related_model = User
 
     @classmethod
     async def get_access_token_db(

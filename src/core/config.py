@@ -29,6 +29,7 @@ class ApiPrefix(BaseSettingsBase):
 
 
 class AuthConfig(BaseSettingsBase):
+    prefix: str = Field(default="/auth")
     login_url: str = Field(
         default_factory=lambda: os.getenv("APP_CONFIG__AUTH__LOGIN_URL")
     )
