@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from core.models.token.access_token import AccessToken
 
 
-def get_access_token_db(
+async def get_access_token_db(
     session: Annotated["AsyncSession", Depends(db_helper.session_get)],
 ):
     async for item in get_db(AccessToken, session):
