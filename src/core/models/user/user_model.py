@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 
 
 class User(
-    BaseModel, IdIntMixin, CrtUpdDatetimeMixin, SQLAlchemyBaseUserTable[UserIdType]
+    IdIntMixin, CrtUpdDatetimeMixin, BaseModel, SQLAlchemyBaseUserTable[UserIdType]
 ):
     @classmethod
-    async def get_db(cls, session: "AsyncSession"):
-        yield SQLAlchemyUserDatabase(session, User)
+    def get_db(cls, session: "AsyncSession"):
+        return SQLAlchemyUserDatabase(session, cls)

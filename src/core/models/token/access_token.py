@@ -4,12 +4,11 @@ from fastapi_users_db_sqlalchemy.access_token import (
     SQLAlchemyAccessTokenDatabase,
     SQLAlchemyBaseAccessTokenTable,
 )
+from sqlalchemy import Integer, ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Mapped, mapped_column
 
-from core.mixins.model_mixins.id_int_mixin import IdIntMixin
-from core.mixins.model_mixins.model_relation_mixin import ModelRelationMixin
 from core.models import BaseModel
-from core.models.user.user_model import User
 from core.types.user_types import UserIdType
 
 if TYPE_CHECKING:
@@ -17,16 +16,18 @@ if TYPE_CHECKING:
 
 
 class AccessToken(
-    IdIntMixin,
     BaseModel,
-    ModelRelationMixin,
     SQLAlchemyBaseAccessTokenTable[UserIdType],
 ):
-    _related_model = User
+    user_id: Mapped[UserIdType] = mapped_column(
+        Integer,
+        ForeignKey("users.id", ondelete="cascade"),
+        nullable=False,
+    )
 
     @classmethod
-    async def get_access_token_db(
+    def get_db(
         cls,
         session: "AsyncSession",
     ):
-        yield SQLAlchemyAccessTokenDatabase(session, AccessToken)
+        return SQLAlchemyAccessTokenDatabase(session, cls)

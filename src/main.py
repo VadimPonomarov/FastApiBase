@@ -1,10 +1,10 @@
-from contextlib import asynccontextmanager
 import sys
+from contextlib import asynccontextmanager
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from loguru import logger
-import uvicorn
 
 from api.router import root_router
 from core.config import settings
