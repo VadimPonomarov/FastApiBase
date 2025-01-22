@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Annotated
 
 from fastapi import Depends
 
-from core.models.token.access_token import AccessToken
+from core.models.token.access_token_model import AccessToken
 from core.utils.db_helper import db_helper
 
 if TYPE_CHECKING:

@@ -7,7 +7,7 @@ from api.dependencies.authentication.token_db import get_access_token_db
 from core.config import settings
 
 if TYPE_CHECKING:
-    from core.models.token.access_token import AccessToken
+    from core.models.token.access_token_model import AccessToken
 
 
 def get_database_strategy(

@@ -13,4 +13,4 @@ if TYPE_CHECKING:
 async def get_user_db(
     session: Annotated["AsyncSession", Depends(db_helper.session_get)]
 )-> "SQLAlchemyUserDatabase":
-    return User.get_db(session=session)
+    yield User.get_db(session=session)
