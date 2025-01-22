@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, AsyncIterator
 
 from fastapi import Depends
 
@@ -12,5 +12,5 @@ if TYPE_CHECKING:
 
 async def get_user_db(
     session: Annotated["AsyncSession", Depends(db_helper.session_get)]
-)-> "SQLAlchemyUserDatabase":
+)-> AsyncIterator["SQLAlchemyUserDatabase"]:
     yield User.get_db(session=session)

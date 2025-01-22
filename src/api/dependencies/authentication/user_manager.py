@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, AsyncIterator
 
 from fastapi import Depends
 
@@ -14,5 +14,5 @@ async def get_user_manager(
         "SQLAlchemyUserDatabase",
         Depends(get_user_db),
     ]
-)-> UserManager:
+)-> AsyncIterator[UserManager]:
     yield UserManager(users_db)

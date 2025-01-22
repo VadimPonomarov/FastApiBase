@@ -25,6 +25,7 @@ flake8 = "^7.1.1"
 ruff = "^0.9.2"
 fastapi-users-db-sqlalchemy = "^7.0.0"
 python-dotenv = "^1.0.1"
+setuptools = "^75.8.0"
 
 [tool.poetry.group.test.dependencies]
 pytest-randomly = "^3.15.0"
