@@ -22,9 +22,6 @@ class UserManager(IdIntMixin, BaseUserManager[User, UserIdType]):
 
     def parse_id(self, user_id: str) -> int: return int(user_id)
 
-    async def on_after_register(self, user: User, request: Optional["Request"] = None):
-        logger.info(f"User {user.id} has registered.")
-
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional["Request"] = None
     ):
