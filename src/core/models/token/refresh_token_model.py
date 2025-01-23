@@ -1,6 +1,9 @@
 from typing import TYPE_CHECKING
 
-from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyAccessTokenDatabase
+from fastapi_users_db_sqlalchemy.access_token import (
+    SQLAlchemyAccessTokenDatabase,
+    SQLAlchemyBaseAccessTokenTable,
+)
 from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column
@@ -12,9 +15,7 @@ if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class AccessToken(
-    BaseModel,
-):
+class RefreshToken(BaseModel, SQLAlchemyBaseAccessTokenTable[UserIdType]):
     token: Mapped[str] = mapped_column(
         String(255), nullable=False, unique=True, primary_key=True
     )
