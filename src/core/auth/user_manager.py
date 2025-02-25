@@ -2,7 +2,8 @@ from typing import Optional
 
 from fastapi import Request, Response
 from fastapi_users import BaseUserManager
-from fastapi_users.jwt import generate_jwt
+from fastapi_users.jwt import decode_jwt, generate_jwt
+from fastapi_users.manager import VERIFY_USER_TOKEN_AUDIENCE
 from loguru import logger
 
 from core.config import settings
@@ -81,3 +82,23 @@ class UserManager(IdIntMixin, BaseUserManager[User, UserIdType]):
                 "refresh_token": refresh_token,
                 "token_type": "bearer",
             }
+
+    async def get_user_by_refresh_token(self, refresh_token: str) -> Optional[User]:
+        async for session in db_helper.session_get():
+            token_repo = TokenRepository(session)
+            token = await token_repo.get_refresh_token(refresh_token)
+            if token is None:
+                return None
+            try:
+                data = decode_jwt(
+                    refresh_token,
+                    self.verification_token_secret,
+                    audience=VERIFY_USER_TOKEN_AUDIENCE,
+                )
+                user_id = data.get("user_id")
+                if user_id is None:
+                    return None
+                return await self.get(user_id)
+            except Exception as e:
+                logger.error(f"Error decoding refresh token: {e}")
+                return None

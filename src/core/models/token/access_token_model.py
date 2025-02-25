@@ -5,6 +5,7 @@ from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column
 
+from core.mixins import CrtUpdDatetimeMixin
 from core.models import BaseModel
 from core.types.user_types import UserIdType
 
@@ -13,6 +14,7 @@ if TYPE_CHECKING:
 
 
 class AccessToken(
+    CrtUpdDatetimeMixin,
     BaseModel,
 ):
     token: Mapped[str] = mapped_column(

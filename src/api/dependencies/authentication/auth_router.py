@@ -7,6 +7,8 @@ from fastapi_users.openapi import OpenAPIResponseType
 from fastapi_users.router.common import ErrorCode, ErrorModel
 from pydantic import BaseModel
 
+from core.auth.user_manager import UserManager
+
 
 class TokenResponse(BaseModel):
     access_token: str
@@ -21,6 +23,10 @@ class TokenResponse(BaseModel):
                 "token_type": "bearer",
             }
         }
+
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
 
 
 def get_my_auth_router(
@@ -82,6 +88,32 @@ def get_my_auth_router(
             )
         response = await backend.login(strategy, user)
         tokens = await user_manager.on_after_login(user, request, response)
+        return tokens
+
+    @router.post(
+        "/refresh",
+        name=f"auth:{backend.name}.refresh",
+        response_model=TokenResponse,
+    )
+    async def refresh_token(
+        request: Request,
+        refresh_token_request: RefreshTokenRequest,
+        user_manager: UserManager = Depends(get_user_manager),
+    ) -> TokenResponse:
+        refresh_token = refresh_token_request.refresh_token
+        user = await user_manager.get_user_by_refresh_token(refresh_token)
+
+        if user is None or not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=ErrorCode.LOGIN_BAD_CREDENTIALS,
+            )
+        if requires_verification and not user.is_verified:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=ErrorCode.LOGIN_USER_NOT_VERIFIED,
+            )
+        tokens = await user_manager.on_after_login(user, request, None)
         return tokens
 
     logout_responses: OpenAPIResponseType = {
