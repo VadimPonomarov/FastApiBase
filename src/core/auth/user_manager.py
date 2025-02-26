@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from fastapi import Request, Response
-from fastapi_users import BaseUserManager
+from fastapi_users import BaseUserManager, exceptions, models
 from fastapi_users.jwt import decode_jwt, generate_jwt
 from fastapi_users.manager import VERIFY_USER_TOKEN_AUDIENCE
 from loguru import logger
@@ -13,6 +13,11 @@ from core.models.token.crud import TokenRepository
 from core.types.user_types import UserIdType
 from core.utils.db_helper import db_helper
 
+if TYPE_CHECKING:
+    from api.dependencies.authentication.auth_router import (
+        HTTPBasicCredentialsWithEmail,
+    )
+
 
 class UserManager(IdIntMixin, BaseUserManager[User, UserIdType]):
     reset_password_token_secret = settings.auth.secret
@@ -22,6 +27,35 @@ class UserManager(IdIntMixin, BaseUserManager[User, UserIdType]):
 
     def parse_id(self, user_id: str) -> int:
         return int(user_id)
+
+    async def authenticate(
+        self, credentials: "HTTPBasicCredentialsWithEmail"
+    ) -> Optional[models.UP]:
+        """
+        Authenticate and return a user following an email and a password.
+
+        Will automatically upgrade password hash if necessary.
+
+        :param credentials: The user credentials.
+        """
+        try:
+            user = await self.get_by_email(credentials.email)
+        except exceptions.UserNotExists:
+            # Run the hasher to mitigate timing attack
+            # Inspired from Django: https://code.djangoproject.com/ticket/20760
+            self.password_helper.hash(credentials.password)
+            return None
+
+        verified, updated_password_hash = self.password_helper.verify_and_update(
+            credentials.password, user.hashed_password
+        )
+        if not verified:
+            return None
+        # Update password hash to a more robust one if needed
+        if updated_password_hash is not None:
+            await self.user_db.update(user, {"hashed_password": updated_password_hash})
+
+        return user
 
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None

@@ -1,13 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_users import models
 from fastapi_users.authentication import AuthenticationBackend, Authenticator, Strategy
 from fastapi_users.manager import BaseUserManager, UserManagerDependency
 from fastapi_users.openapi import OpenAPIResponseType
 from fastapi_users.router.common import ErrorCode, ErrorModel
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
+from typing_extensions import Annotated
 
 from core.auth.user_manager import UserManager
+
+
+class HTTPBasicCredentialsWithEmail(BaseModel):
+    email: Annotated[EmailStr, Field(description="Email.")]
+    password: Annotated[str, Field(description="Password.")]
 
 
 class TokenResponse(BaseModel):
@@ -70,7 +75,7 @@ def get_my_auth_router(
     )
     async def login(
         request: Request,
-        credentials: OAuth2PasswordRequestForm = Depends(),
+        credentials: HTTPBasicCredentialsWithEmail = Depends(),
         user_manager: BaseUserManager[models.UP, models.ID] = Depends(get_user_manager),
         strategy: Strategy[models.UP, models.ID] = Depends(backend.get_strategy),
     ) -> TokenResponse:

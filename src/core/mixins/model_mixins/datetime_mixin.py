@@ -8,7 +8,7 @@ class CrtUpdDatetimeMixin:
     @classmethod
     def created_at(cls) -> Mapped[TIMESTAMP(timezone=True)]:
         return mapped_column(
-            TIMESTAMP(timezone=True), server_default=func.now(), nullable=False
+            TIMESTAMP(timezone=True), server_default=func.now(), nullable=True
         )
 
     @declared_attr
@@ -18,5 +18,5 @@ class CrtUpdDatetimeMixin:
             TIMESTAMP(timezone=True),
             server_default=func.now(),
             onupdate=func.now(),
-            nullable=False,
+            nullable=True,
         )
