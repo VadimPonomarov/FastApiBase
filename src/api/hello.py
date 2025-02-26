@@ -2,9 +2,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Path
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter(prefix="", tags=["Hello"])
 
 
-@router.get("/items/{hello}")
+@router.get("/")
 async def read_item(hello: Annotated[str, Path(default_factory=lambda: "hello")]):
-    return {"hello": hello}
+    return "Hello, World"
