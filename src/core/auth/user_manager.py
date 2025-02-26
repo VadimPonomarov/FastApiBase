@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING, Optional
 
 from fastapi import Request, Response
-from fastapi_users import BaseUserManager, exceptions, models
-from fastapi_users.jwt import decode_jwt, generate_jwt
-from fastapi_users.manager import VERIFY_USER_TOKEN_AUDIENCE
+from fastapi_users import BaseUserManager, exceptions, jwt, models
+from fastapi_users.jwt import JWT_ALGORITHM, generate_jwt
+import jwt
 from loguru import logger
 
 from core.config import settings
@@ -117,21 +117,25 @@ class UserManager(IdIntMixin, BaseUserManager[User, UserIdType]):
                 "token_type": "bearer",
             }
 
-    async def get_user_by_refresh_token(self, refresh_token: str) -> Optional[User]:
+    async def refresh_auth_tokens(self, refresh_token: str) -> Optional[User]:
         async for session in db_helper.session_get():
             token_repo = TokenRepository(session)
             token = await token_repo.get_refresh_token(refresh_token)
             if token is None:
                 return None
             try:
-                data = decode_jwt(
+                data = jwt.decode(
                     refresh_token,
                     self.verification_token_secret,
-                    audience=VERIFY_USER_TOKEN_AUDIENCE,
+                    algorithms=JWT_ALGORITHM,
                 )
                 user_id = data.get("user_id")
                 if user_id is None:
                     return None
+
+                # Преобразование user_id в integer
+                user_id = int(user_id)
+
                 return await self.get(user_id)
             except Exception as e:
                 logger.error(f"Error decoding refresh token: {e}")

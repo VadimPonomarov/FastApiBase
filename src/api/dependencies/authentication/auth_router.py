@@ -106,7 +106,7 @@ def get_my_auth_router(
         user_manager: UserManager = Depends(get_user_manager),
     ) -> TokenResponse:
         refresh_token = refresh_token_request.refresh_token
-        user = await user_manager.get_user_by_refresh_token(refresh_token)
+        user = await user_manager.refresh_auth_tokens(refresh_token)
 
         if user is None or not user.is_active:
             raise HTTPException(
