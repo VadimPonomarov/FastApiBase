@@ -12,3 +12,7 @@ def camel_case_to_snake_case(input_str: str) -> str:
                 chars.append("_")
         chars.append(char.lower())
     return "".join(chars)
+
+
+def str_to_bool(value: str) -> bool:
+    return value.lower() in ("yes", "true", "t", "1", "on", "y", "enable", 1)

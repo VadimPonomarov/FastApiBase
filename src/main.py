@@ -1,6 +1,8 @@
+import os
 import sys
 from contextlib import asynccontextmanager
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from loguru import logger
@@ -9,15 +11,17 @@ from api.endpoints.router import router
 from core.db import db_helper
 from core.enums import LoguruFormatEnum
 from core.settings.config import settings
-
-import uvicorn
+from core.utils.converters import str_to_bool
 
 app = FastAPI()
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if settings.loguru.is_logging:
+    if str_to_bool(os.getenv("APP_CONFIG___IS_LOGGING")):
         logger.remove()
         logger.add(sink=sys.stdout, format=LoguruFormatEnum.BASE.value)
         logger.info("That's it, beautiful and simple logging!")

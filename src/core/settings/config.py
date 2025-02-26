@@ -1,6 +1,6 @@
 from typing import Annotated, Dict
 
-from pydantic import Field, PostgresDsn, computed_field, field_validator
+from pydantic import Field, PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,20 +18,6 @@ class BaseSettingsBase(BaseSettings):
 class RunConfig(BaseSettingsBase):
     host: str = Field(default="localhost")
     port: int = Field(default=8000)
-
-
-class LoguruConfig(BaseSettingsBase):
-    is_logging: bool = True
-
-    @field_validator("is_logging", mode="before")
-    @classmethod
-    def convert_to_bool(cls, value):
-        if isinstance(value, str):
-            if value.lower() in ["true", "1"]:
-                return bool(True)
-            elif value.lower() in ["false", "0"]:
-                return bool(False)
-        return value
 
 
 class ApiPrefix(BaseSettingsBase):
@@ -72,7 +58,6 @@ class DatabaseConfig(BaseSettingsBase):
 class Settings(BaseSettingsBase):
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
-    loguru: LoguruConfig = LoguruConfig()
     db: DatabaseConfig
 
 
