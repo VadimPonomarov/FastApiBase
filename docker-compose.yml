@@ -1,18 +1,4 @@
-version: "3.9"
 services:
-  db:
-    image: postgres:14-alpine
-    environment:
-      POSTGRES_DB: "${APP_CONFIG__POSTGRES_DB:-db}"
-      POSTGRES_USER: "${APP_CONFIG__POSTGRES_USER:-user}"
-      POSTGRES_PASSWORD: "${APP_CONFIG__POSTGRES_PASSWORD:-root}"
-    env_file:
-      - src/.env
-    volumes:
-      - ./pg_data:/var/lib/postgresql/data
-    ports:
-      - "5431:5432"
-
   rabbitmq:
     image: rabbitmq:4.0.4-management
     hostname: rabbitmq
@@ -24,10 +10,9 @@ services:
       RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER:-guest}"
       RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS:-guest}"
     env_file:
-      - .env
+      - src/.env
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
 
 volumes:
   rabbitmq-data:
-  pg_data:
