@@ -19,7 +19,7 @@ data = {
 html_content = template.render(data)
 
 with open(
-    r"D:\myDocuments\studying\Projects\FastApiBase\public\indonesian_halal_logo_2022.jpg",
+    r"..\public\indonesian_halal_logo_2022.jpg",
     "rb",
 ) as logo_file:
     logo_data = logo_file.read()
