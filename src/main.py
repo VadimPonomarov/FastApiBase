@@ -8,7 +8,6 @@ from fastapi.responses import ORJSONResponse
 from loguru import logger
 
 from api.router import router
-from core.db import db_helper
 from core.enums import LoguruFormatEnum
 from core.settings.config import settings
 from core.utils.converters import str_to_bool
