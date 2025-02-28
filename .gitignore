@@ -162,4 +162,4 @@ cython_debug/
 .vscode/
 */pg_data/**
 /src/pg_data
-*/.env
+/src/.env
