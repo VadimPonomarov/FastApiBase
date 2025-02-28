@@ -8,7 +8,6 @@ from fastapi.responses import ORJSONResponse
 from loguru import logger
 
 from api.router import router
-from core.db import db_helper
 from core.enums import LoguruFormatEnum
 from core.settings.config import settings
 from core.utils.converters import str_to_bool
@@ -21,13 +20,12 @@ load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if str_to_bool(os.getenv("APP_CONFIG___IS_LOGGING")):
+    if str_to_bool(os.getenv("APP_CONFIG__LOGURU", False)):
         logger.remove()
         logger.add(sink=sys.stdout, format=LoguruFormatEnum.BASE.value)
         logger.info("That's it, beautiful and simple logging!")
     yield
     logger.remove()
-    await db_helper.dispose()
 
 
 main_app = FastAPI(lifespan=lifespan, default_response_class=ORJSONResponse)
