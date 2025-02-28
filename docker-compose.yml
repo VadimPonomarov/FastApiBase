@@ -1,17 +1,47 @@
-version: "3.9"
 services:
-  db:
-    image: postgres:14-alpine
-    environment:
-      POSTGRES_DB: "${APP_CONFIG__POSTGRES_DB:-db}"
-      POSTGRES_USER: "${APP_CONFIG__POSTGRES_USER:-user}"
-      POSTGRES_PASSWORD: "${APP_CONFIG__POSTGRES_PASSWORD:-root}"
-    env_file:
-      - src/.env
-    volumes:
-      - ./pg_data:/var/lib/postgresql/data
-    ports:
-      - "5431:5432"
+#  app:
+#    build:
+#      context: .
+#    volumes:
+#      - ./src/:/app
+#    env_file:
+#      - ./src/.env
+#    ports:
+#      - "8000:8000"
+#    restart: on-failure
+#    command: >
+#      sh -c "python main.py"
+#
+#  celery:
+#    build:
+#      context: .
+#    volumes:
+#      - ./src/:/app
+#    env_file:
+#      - ./src/.env
+#    restart: on-failure
+#    depends_on: [ rabbitmq ]
+#    command: >
+#      sh -c "celery -A configs worker -l info -B --events"
+#  #      sh -c "celery -A configs worker -l info -B"
 
-volumes:
-  pg_data:
+  rabbitmq:
+    image: rabbitmq:3.10.7-management
+    hostname: rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
+
+  flower:
+    image: mher/flower:0.9.7
+    restart: on-failure
+    depends_on: [ rabbitmq ]
+    ports:
+      - "1111:5555"
+    command: [ "flower", "--broker=amqp://guest:guest@localhost:5672", "--port=5555" ]
