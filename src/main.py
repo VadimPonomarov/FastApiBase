@@ -3,7 +3,6 @@ import sys
 from contextlib import asynccontextmanager
 
 import uvicorn
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from loguru import logger
@@ -15,6 +14,7 @@ from core.settings.config import settings
 from core.utils.converters import str_to_bool
 
 app = FastAPI()
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -27,6 +27,7 @@ async def lifespan(app: FastAPI):
         logger.info("That's it, beautiful and simple logging!")
     yield
     logger.remove()
+    await db_helper.dispose()
 
 
 main_app = FastAPI(lifespan=lifespan, default_response_class=ORJSONResponse)
