@@ -2,8 +2,9 @@ from celery import Celery
 
 celery_app = Celery(
     "celery_config",
-    broker="pyamqp://guest:guest@rabbitmq:5672//",
+    broker="pyamqp://guest:guest@localhost:5672//",
     backend="rpc://",
+    include=["api.routers.mail_services"],
 )
 
 celery_app.conf.update(

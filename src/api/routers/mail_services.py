@@ -18,7 +18,7 @@ template_loader = FileSystemLoader(
 env = Environment(loader=template_loader, autoescape=True)
 
 
-@celery_app.task(name="send_email")
+@celery_app.task(name="api.routers.mail_services.send_email")
 def send_email(to_email: str, subject: str, template_data: dict):
     # Загрузка и рендеринг HTML-шаблона
     template = env.get_template("email_template.html")
