@@ -1,17 +1,41 @@
-version: "3.9"
+version: '3.8'
+
 services:
-  db:
-    image: postgres:14-alpine
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    hostname: rabbitmq
+    restart: always
     environment:
-      POSTGRES_DB: "${APP_CONFIG__POSTGRES_DB:-db}"
-      POSTGRES_USER: "${APP_CONFIG__POSTGRES_USER:-user}"
-      POSTGRES_PASSWORD: "${APP_CONFIG__POSTGRES_PASSWORD:-root}"
-    env_file:
-      - src/.env
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     volumes:
-      - ./pg_data:/var/lib/postgresql/data
+      - rabbitmq:/var/lib/rabbitmq
     ports:
-      - "5431:5432"
+      - 15672:15672
+      - 5672:5672
+
+  celery:
+    build:
+      context: .
+    volumes:
+      - ./src:/app
+    env_file:
+      - ./src/.env
+    restart: on-failure
+    depends_on: 
+      - rabbitmq
+    command: >
+      sh -c "celery -A celery_config worker -l info"
+
+  flower:
+    image: mher/flower:0.9.7
+    restart: on-failure
+    depends_on: 
+      - rabbitmq
+      - celery
+    ports:
+      - "5555:5555"
+    command: ["flower", "--broker=pyamqp://guest:guest@rabbitmq:5672//", "--port=5555"]
 
 volumes:
-  pg_data:
+  rabbitmq:

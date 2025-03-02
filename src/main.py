@@ -13,9 +13,6 @@ from core.settings.config import settings
 from core.utils.converters import str_to_bool
 
 app = FastAPI()
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 @asynccontextmanager

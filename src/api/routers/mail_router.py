@@ -5,10 +5,12 @@ from api.routers.mail_services import send_email
 
 router = APIRouter()
 
+
 class EmailSchema(BaseModel):
     to_email: str
     subject: str
     message: str
+
 
 @router.post("/send-email/")
 async def send_email_endpoint(email: EmailSchema):
@@ -16,9 +18,9 @@ async def send_email_endpoint(email: EmailSchema):
         template_data = {
             "title": email.subject,
             "message": email.message,
-            "logo_url": "cid:logo"  # Используем Content-ID для логотипа
+            "logo_url": "cid:logo",
         }
-        send_email(email.to_email, email.subject, template_data)
+        send_email.delay(email.to_email, email.subject, template_data)
         return {"message": "Email sent successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
