@@ -4,7 +4,7 @@ celery_app = Celery(
     "celery_config",
     broker="pyamqp://guest:guest@localhost:5672//",
     backend="rpc://",
-    include=["api.routers.mail_services"],
+    include=["services.mail_services"],
 )
 
 celery_app.conf.update(
