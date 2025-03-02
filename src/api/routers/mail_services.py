@@ -49,7 +49,7 @@ def send_email(to_email: str, subject: str, template_data: dict):
 
     # Отправка сообщения через SendGrid API
     try:
-        sg = SendGridAPIClient(api_key=os.environ.get("SENDGRID_API_KEY"))
+        sg = SendGridAPIClient(api_key=os.getenv("SENDGRID_API_KEY"))
         response = sg.send(message)
         print(response.status_code)
         print(response.body)
