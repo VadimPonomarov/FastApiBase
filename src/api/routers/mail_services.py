@@ -1,3 +1,4 @@
+import os
 from base64 import b64encode
 
 from dotenv import load_dotenv
@@ -48,9 +49,7 @@ def send_email(to_email: str, subject: str, template_data: dict):
 
     # Отправка сообщения через SendGrid API
     try:
-        sg = SendGridAPIClient(
-            "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"
-        )
+        sg = SendGridAPIClient(api_key=os.environ.get("SENDGRID_API_KEY"))
         response = sg.send(message)
         print(response.status_code)
         print(response.body)
