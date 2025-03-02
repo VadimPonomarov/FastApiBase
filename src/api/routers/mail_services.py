@@ -1,4 +1,3 @@
-import os
 from base64 import b64encode
 
 from dotenv import load_dotenv
@@ -12,9 +11,7 @@ from celery_config import celery_app
 load_dotenv()
 
 # Настройка загрузчика шаблонов и окружения Jinja2
-template_loader = FileSystemLoader(
-    searchpath="D:/myDocuments/studying/Projects/FastApiBase/src/templates"
-)
+template_loader = FileSystemLoader(searchpath="./templates")
 env = Environment(loader=template_loader, autoescape=True)
 
 
@@ -26,7 +23,7 @@ def send_email(to_email: str, subject: str, template_data: dict):
 
     # Чтение логотипа и кодирование в base64
     with open(
-        "D:/myDocuments/studying/Projects/FastApiBase/src/public/indonesian_halal_logo_2022.jpg",
+        "../public/indonesian_halal_logo_2022.jpg",
         "rb",
     ) as logo_file:
         logo_data = logo_file.read()
@@ -51,7 +48,9 @@ def send_email(to_email: str, subject: str, template_data: dict):
 
     # Отправка сообщения через SendGrid API
     try:
-        sg = SendGridAPIClient(os.environ.get("SENDGRID_API_KEY"))
+        sg = SendGridAPIClient(
+            "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"
+        )
         response = sg.send(message)
         print(response.status_code)
         print(response.body)
