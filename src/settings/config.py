@@ -1,5 +1,5 @@
-
-from pydantic import Field
+from celery import Celery
+from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,6 +11,7 @@ class BaseSettingsBase(BaseSettings):
         env_nested_delimiter="__",
         env_prefix="APP_CONFIG__",
         extra="allow",
+        arbitrary_types_allowed=True,
     )
 
 
@@ -23,10 +24,35 @@ class ApiPrefix(BaseSettingsBase):
     prefix: str = Field(default="/api")
 
 
+class CeleryConfig(BaseModel):
+    broker: str = Field(default="pyamqp://guest:guest@localhost:5672//")
+    backend: str = Field(default="rpc://")
+    include: str = Field(default="services")
+
+    @property
+    def get_celery_app(self) -> Celery:
+        celery_app = Celery(
+            "config",
+            broker=self.broker,
+            backend=self.backend,
+            include=self.include.split(","),
+        )
+
+        celery_app.conf.update(
+            task_serializer="json",
+            accept_content=["json"],
+            result_serializer="json",
+            timezone="Europe/Kiev",
+            enable_utc=True,
+        )
+
+        return celery_app
+
 
 class Settings(BaseSettingsBase):
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
+    celery_app: CeleryConfig = CeleryConfig()
 
 
-settings = Settings()  # type: ignore
+settings = Settings()
