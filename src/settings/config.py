@@ -1,6 +1,9 @@
 from celery import Celery
-from pydantic import BaseModel, Field
+from dotenv import load_dotenv
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+load_dotenv()
 
 
 class BaseSettingsBase(BaseSettings):
@@ -24,18 +27,18 @@ class ApiPrefix(BaseSettingsBase):
     prefix: str = Field(default="/api")
 
 
-class CeleryConfig(BaseModel):
-    broker: str = Field(default="pyamqp://guest:guest@localhost:5672//")
-    backend: str = Field(default="rpc://")
-    include: str = Field(default="services")
+class CeleryConfig(BaseSettingsBase):
+    celery_broker: str = Field(default="pyamqp://guest:guest@localhost:5672//")
+    celery_backend: str = Field(default="rpc://")
+    celery_include: str = Field(default="services.mail_services")
 
     @property
     def get_celery_app(self) -> Celery:
         celery_app = Celery(
-            "config",
-            broker=self.broker,
-            backend=self.backend,
-            include=self.include.split(","),
+            __name__,
+            broker=self.celery_broker,
+            backend=self.celery_backend,
+            include=self.celery_include.split(",") if self.celery_include else None,
         )
 
         celery_app.conf.update(
