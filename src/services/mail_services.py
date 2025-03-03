@@ -8,7 +8,7 @@ from jinja2 import Environment, FileSystemLoader
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Attachment, Mail
 
-from settings.celery.celery_config import celery_app
+from celery_config import celery_app
 
 load_dotenv()
 
