@@ -1,5 +1,4 @@
 import json
-import os
 from base64 import b64encode
 
 import pika
@@ -9,6 +8,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Attachment, Mail
 
 from celery_config import celery_app
+from settings.config import settings
 
 load_dotenv()
 
@@ -44,7 +44,7 @@ def send_email(to_email: str, subject: str, template_data: dict):
     message.add_attachment(attachment)
 
     try:
-        sg = SendGridAPIClient(api_key=os.getenv("SENDGRID_API_KEY"))
+        sg = SendGridAPIClient(settings.sendgrid.api_key)
         response = sg.send(message)
         print(response.status_code)
         print(response.body)
