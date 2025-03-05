@@ -1,4 +1,9 @@
-from services.mail_services import consume_email_queue
+import pika
+
+from utils.pika_helper import ConnectionFactory
 
 if __name__ == "__main__":
-    consume_email_queue()
+    connection = ConnectionFactory(
+        pika.ConnectionParameters("localhost"), "email_queue"
+    )
+    connection.consume()

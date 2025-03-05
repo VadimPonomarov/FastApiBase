@@ -1,7 +1,5 @@
-import json
 from base64 import b64encode
 
-import pika
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
 from sendgrid import SendGridAPIClient
@@ -51,27 +49,3 @@ def send_email(to_email: str, subject: str, template_data: dict):
         print(response.headers)
     except Exception as e:
         print(str(e))
-
-
-def callback(ch, method, properties, body):
-    email_data = json.loads(body)
-    send_email.delay(
-        email_data["to_email"],
-        email_data["subject"],
-        {
-            "title": email_data["subject"],
-            "message": email_data["message"],
-            "logo_url": email_data["logo_url"],
-        },
-    )
-    ch.basic_ack(delivery_tag=method.delivery_tag)
-
-
-def consume_email_queue():
-    connection = pika.BlockingConnection(pika.ConnectionParameters("localhost"))
-    channel = connection.channel()
-    channel.queue_declare(queue="email_queue")
-    channel.basic_qos(prefetch_count=1)
-    channel.basic_consume(queue="email_queue", on_message_callback=callback)
-    print(" [*] Waiting for messages. To exit press CTRL+C")
-    channel.start_consuming()
