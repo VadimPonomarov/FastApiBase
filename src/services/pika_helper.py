@@ -3,12 +3,20 @@ from typing import TYPE_CHECKING
 
 from pika.adapters.blocking_connection import BlockingChannel, BlockingConnection
 from pika.spec import Basic, BasicProperties
+from pydantic import BaseModel
 
 from core.enums.pika import ExchangeType, QueueType
 from services.mail_services import send_email
 
 if TYPE_CHECKING:
     from pika.connection import ConnectionParameters
+
+
+class MessageSchema(BaseModel):
+    to_email: str
+    subject: str
+    message: str
+    logo_url: str
 
 
 class ConnectionFactory:
