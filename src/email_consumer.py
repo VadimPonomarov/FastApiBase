@@ -1,6 +1,6 @@
 import pika
 
-from utils.pika_helper import ConnectionFactory
+from services.pika_helper import ConnectionFactory
 
 if __name__ == "__main__":
     connection = ConnectionFactory(

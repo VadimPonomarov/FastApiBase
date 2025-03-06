@@ -2,11 +2,13 @@ from base64 import b64encode
 
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
+from pydantic import BaseModel
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Attachment, Mail
 
 from celery_config import celery_app
 from settings.config import settings
+from templates.email_enum import EmailTemplateEnum
 
 load_dotenv()
 
@@ -14,13 +16,20 @@ template_loader = FileSystemLoader(searchpath="./templates")
 env = Environment(loader=template_loader, autoescape=True)
 
 
+class SendEmailParams(BaseModel):
+    from_email: str = "pvs.versia@gmail.com"
+    to_email: str = "pvs.versia@gmail.com"
+    subject: str
+    template_data: dict
+
+
 @celery_app.task(name="send_email_task")
-def send_email(to_email: str, subject: str, template_data: dict):
-    template = env.get_template("email_template.html")
-    html_content = template.render(template_data)
+def send_email(params: SendEmailParams) -> None:
+    template = env.get_template(EmailTemplateEnum.EMAIL_TEMPLATE_BASE.value)
+    html_content = template.render(params.template_data)
 
     with open(
-        "./media/indonesian_halal_logo_2022.jpg",
+        settings.sendgrid.logo_url,
         "rb",
     ) as logo_file:
         logo_data = logo_file.read()
@@ -35,8 +44,8 @@ def send_email(to_email: str, subject: str, template_data: dict):
 
     message = Mail(
         from_email="pvs.versia@gmail.com",
-        to_emails=to_email,
-        subject=subject,
+        to_emails=params.to_email,
+        subject=params.subject,
         html_content=html_content,
     )
     message.add_attachment(attachment)

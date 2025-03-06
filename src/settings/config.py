@@ -59,6 +59,7 @@ class CeleryConfig(BaseSettingsBase):
 
 class SendgridConfig(BaseSettingsBase):
     api_key: str | None = None
+    logo_url: str | None = "./media/indonesian_halal_logo_2022.jpg"
 
 
 class Settings(BaseSettingsBase):
