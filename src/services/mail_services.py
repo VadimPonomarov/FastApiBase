@@ -6,6 +6,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Attachment, Mail
 
 from celery_config import celery_app
+from core.enums.templates import TemplatesEnum, TemplatesLogosEnum
 from settings.config import settings
 
 load_dotenv()
@@ -16,11 +17,11 @@ env = Environment(loader=template_loader, autoescape=True)
 
 @celery_app.task(name="send_email_task")
 def send_email(to_email: str, subject: str, template_data: dict):
-    template = env.get_template("email_template.html")
+    template = env.get_template(TemplatesEnum.EMAIL_TEMPLATE_BASE.value)
     html_content = template.render(template_data)
 
     with open(
-        "./media/indonesian_halal_logo_2022.jpg",
+        f"./media/{TemplatesLogosEnum.INDONESIAN_HALAL_LOGO.value}",
         "rb",
     ) as logo_file:
         logo_data = logo_file.read()
@@ -34,7 +35,7 @@ def send_email(to_email: str, subject: str, template_data: dict):
     attachment.content_id = "logo"
 
     message = Mail(
-        from_email="pvs.versia@gmail.com",
+        from_email=settings.sendgrid.my_email,
         to_emails=to_email,
         subject=subject,
         html_content=html_content,

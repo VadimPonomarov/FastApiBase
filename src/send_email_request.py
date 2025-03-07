@@ -1,6 +1,6 @@
 from pika import ConnectionParameters
 
-from utils.pika_helper import ConnectionFactory
+from services.pika_helper import ConnectionFactory
 
 
 def send_email_request(to_email, subject, message, logo_url):

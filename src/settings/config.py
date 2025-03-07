@@ -59,6 +59,7 @@ class CeleryConfig(BaseSettingsBase):
 
 class SendgridConfig(BaseSettingsBase):
     api_key: str | None = None
+    my_email: str | None = None
 
 
 class Settings(BaseSettingsBase):
