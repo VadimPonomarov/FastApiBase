@@ -7,6 +7,6 @@ if __name__ == "__main__":
     connection = ConnectionFactory(
         pika.ConnectionParameters("localhost"),
         "email_queue",
-        callback=lambda data: send_email(data),
+        callback=lambda *args, **kwargs: send_email.delay(*args, **kwargs),
     )
     connection.consume()

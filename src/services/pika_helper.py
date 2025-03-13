@@ -1,5 +1,5 @@
 import json
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Callable
 
 from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel, BlockingConnection
@@ -20,7 +20,7 @@ class ConnectionFactory:
         queue_type: QueueType = QueueType.DURABLE,
         exchange_name: str = "",
         exchange_type: ExchangeType = ExchangeType.DIRECT,
-        callback: Callable[[Any], Any] = None,
+        callback: Callable = None,
     ):
         self.__connection: BlockingConnection = BlockingConnection(parameters)
         self.__queue_name: str = queue_name
@@ -60,8 +60,10 @@ class ConnectionFactory:
         properties: BasicProperties,
         body: bytes,
     ) -> None:
+        body = json.loads(body.decode("utf-8"))
+        cb_params = SendEmailParams(**body).model_dump()
         print(f" [x] Received {body}")
-        self.__callback(json.loads(body))
+        self.__callback(**cb_params)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def close(self) -> None:

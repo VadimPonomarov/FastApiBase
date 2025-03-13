@@ -10,6 +10,8 @@ if __name__ == "__main__":
         queue_name="email_queue",
     ).publish(
         params=SendEmailParams(
-            template_data=MyTemplateData(title="Test Email", message="Test Message"),
+            template_data=MyTemplateData(
+                title="Test Email", message="Test Message", logo_url="cid:logo"
+            ),
         ),
     )

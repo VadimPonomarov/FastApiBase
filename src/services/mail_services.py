@@ -1,4 +1,3 @@
-import os
 from base64 import b64encode
 
 from dotenv import load_dotenv
@@ -8,36 +7,31 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Attachment, Mail
 
 from celery_config import celery_app
-from core.enums.templates import TemplatesLogosEnum
+from core.schemas.email import MyTemplateData
 from settings.config import settings
-from templates.email_enum import EmailTemplateEnum
 
 load_dotenv()
 
+template_loader = FileSystemLoader(searchpath="./templates")
+env = Environment(loader=template_loader, autoescape=True)
 
-class SendEmailParams[T](BaseModel):
-    template_data: T
+
+class SendEmailParams(BaseModel):
     from_email: str = settings.sendgrid.my_email
     to_email: str = settings.sendgrid.my_email
-    subject: str = "Test Email"
-    email_type: EmailTemplateEnum = EmailTemplateEnum.EMAIL_TEMPLATE_BASE
-    logo_name: TemplatesLogosEnum = TemplatesLogosEnum.INDONESIAN_HALAL_LOGO
+    subject: str = "Subject"
+    template_data: MyTemplateData
 
 
 @celery_app.task(name="send_email_task")
-def send_email(params: SendEmailParams) -> None:
-    template_loader = FileSystemLoader(
-        searchpath=settings.templates_path or "./templates"
-    )
-    env = Environment(loader=template_loader, autoescape=True)
-
-    template = env.get_template(
-        params.email_type.value or EmailTemplateEnum.EMAIL_TEMPLATE_BASE.value
-    )
-    html_content = template.render(params.template_data)
+def send_email(
+    from_email: str, to_email: str, subject: str, template_data: dict
+) -> None:
+    template = env.get_template("email_template.html")
+    html_content = template.render(template_data)
 
     with open(
-        os.path.join(settings.media_path or "./media", params.logo_name.value),
+        "./media/indonesian_halal_logo_2022.jpg",
         "rb",
     ) as logo_file:
         logo_data = logo_file.read()
@@ -51,9 +45,9 @@ def send_email(params: SendEmailParams) -> None:
     attachment.content_id = "logo"
 
     message = Mail(
-        from_email="pvs.versia@gmail.com",
-        to_emails=params.to_email,
-        subject=params.subject,
+        from_email=from_email,
+        to_emails=to_email,
+        subject=subject,
         html_content=html_content,
     )
     message.add_attachment(attachment)
