@@ -20,7 +20,7 @@ class ConnectionFactory:
         queue_type: QueueType = QueueType.DURABLE,
         exchange_name: str = "",
         exchange_type: ExchangeType = ExchangeType.DIRECT,
-        callback: Callable = None,
+        callback: Callable | None = None,
     ):
         self.__connection: BlockingConnection = BlockingConnection(parameters)
         self.__queue_name: str = queue_name
