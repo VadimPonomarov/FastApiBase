@@ -61,7 +61,7 @@ class ConnectionFactory:
         body: bytes,
     ) -> None:
         body = json.loads(body.decode("utf-8"))
-        cb_params = SendEmailParams(**body).model_dump()
+        cb_params = SendEmailParams.model_dump(body)
         print(f" [x] Received {body}")
         self.__callback(**cb_params)
         ch.basic_ack(delivery_tag=method.delivery_tag)
