@@ -6,7 +6,7 @@ from pika.adapters.blocking_connection import BlockingChannel, BlockingConnectio
 from pika.spec import Basic
 
 from core.enums.pika import ExchangeType, QueueType
-from services.mail_services import SendEmailParams
+from services.mail_services import SendEmailParams, send_email
 
 if TYPE_CHECKING:
     from pika.connection import ConnectionParameters
@@ -20,7 +20,7 @@ class ConnectionFactory:
         queue_type: QueueType = QueueType.DURABLE,
         exchange_name: str = "",
         exchange_type: ExchangeType = ExchangeType.DIRECT,
-        callback: Callable[[Any], Any] = None,
+        callback: Callable[[Any], None] = None,
     ):
         self.__connection: BlockingConnection = BlockingConnection(parameters)
         self.__queue_name: str = queue_name
@@ -60,8 +60,9 @@ class ConnectionFactory:
         properties: BasicProperties,
         body: bytes,
     ) -> None:
+        body = json.loads(body.decode("utf-8"))
         print(f" [x] Received {body}")
-        self.__callback(json.loads(body))
+        send_email.delay(**SendEmailParams(**body).model_dump())
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def close(self) -> None:
