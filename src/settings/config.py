@@ -43,6 +43,7 @@ class CeleryConfig(BaseSettingsBase):
             "config",
             broker=self.celery_broker,
             backend=self.celery_backend,
+            broker_connection_retry_on_startup=True,
             include=self.celery_include.split(",") if self.celery_include else [],
         )
 
@@ -63,6 +64,8 @@ class SendgridConfig(BaseSettingsBase):
 
 
 class Settings(BaseSettingsBase):
+    media_path: str | None = "./media"
+    templates_path: str | None = "./templates"
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
     celery_app: CeleryConfig = CeleryConfig()

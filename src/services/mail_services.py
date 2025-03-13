@@ -1,27 +1,43 @@
+import os
 from base64 import b64encode
 
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
+from pydantic import BaseModel
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Attachment, Mail
 
 from celery_config import celery_app
-from core.enums.templates import TemplatesEnum, TemplatesLogosEnum
+from core.enums.templates import TemplatesLogosEnum
 from settings.config import settings
+from templates.email_enum import EmailTemplateEnum
 
 load_dotenv()
 
-template_loader = FileSystemLoader(searchpath="./templates")
-env = Environment(loader=template_loader, autoescape=True)
+
+class SendEmailParams[T](BaseModel):
+    template_data: T
+    from_email: str = settings.sendgrid.my_email
+    to_email: str = settings.sendgrid.my_email
+    subject: str = "Test Email"
+    email_type: EmailTemplateEnum = EmailTemplateEnum.EMAIL_TEMPLATE_BASE
+    logo_name: TemplatesLogosEnum = TemplatesLogosEnum.INDONESIAN_HALAL_LOGO
 
 
 @celery_app.task(name="send_email_task")
-def send_email(to_email: str, subject: str, template_data: dict):
-    template = env.get_template(TemplatesEnum.EMAIL_TEMPLATE_BASE.value)
-    html_content = template.render(template_data)
+def send_email(params: SendEmailParams) -> None:
+    template_loader = FileSystemLoader(
+        searchpath=settings.templates_path or "./templates"
+    )
+    env = Environment(loader=template_loader, autoescape=True)
+
+    template = env.get_template(
+        params.email_type.value or EmailTemplateEnum.EMAIL_TEMPLATE_BASE.value
+    )
+    html_content = template.render(params.template_data)
 
     with open(
-        f"./media/{TemplatesLogosEnum.INDONESIAN_HALAL_LOGO.value}",
+        os.path.join(settings.media_path or "./media", params.logo_name.value),
         "rb",
     ) as logo_file:
         logo_data = logo_file.read()
@@ -35,9 +51,9 @@ def send_email(to_email: str, subject: str, template_data: dict):
     attachment.content_id = "logo"
 
     message = Mail(
-        from_email=settings.sendgrid.my_email,
-        to_emails=to_email,
-        subject=subject,
+        from_email="pvs.versia@gmail.com",
+        to_emails=params.to_email,
+        subject=params.subject,
         html_content=html_content,
     )
     message.add_attachment(attachment)

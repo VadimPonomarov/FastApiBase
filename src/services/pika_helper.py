@@ -1,22 +1,15 @@
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable
 
+from pika import BasicProperties
 from pika.adapters.blocking_connection import BlockingChannel, BlockingConnection
-from pika.spec import Basic, BasicProperties
-from pydantic import BaseModel
+from pika.spec import Basic
 
 from core.enums.pika import ExchangeType, QueueType
-from services.mail_services import send_email
+from services.mail_services import SendEmailParams
 
 if TYPE_CHECKING:
     from pika.connection import ConnectionParameters
-
-
-class MessageSchema(BaseModel):
-    to_email: str
-    subject: str
-    message: str
-    logo_url: str
 
 
 class ConnectionFactory:
@@ -27,6 +20,7 @@ class ConnectionFactory:
         queue_type: QueueType = QueueType.DURABLE,
         exchange_name: str = "",
         exchange_type: ExchangeType = ExchangeType.DIRECT,
+        callback: Callable[[Any], Any] = None,
     ):
         self.__connection: BlockingConnection = BlockingConnection(parameters)
         self.__queue_name: str = queue_name
@@ -36,17 +30,17 @@ class ConnectionFactory:
         self.__channel = self.__connection.channel()
         self.__channel.basic_qos(prefetch_count=1)
         self.__channel.queue_declare(queue=self.__queue_name)
+        self.__callback = callback
 
     def get_connection(self) -> BlockingConnection:
         return self.__connection
 
-    def publish(self, message: dict) -> None:
+    def publish(self, params: SendEmailParams) -> None:
         with self.get_connection() as connection:
-            message_json: bytes = json.dumps(message).encode("utf-8")
             self.__channel.basic_publish(
                 exchange=self.__exchange_name,
                 routing_key=self.__queue_name,
-                body=message_json,
+                body=params.model_dump_json().encode("utf-8"),
             )
             print(" [x] Sent email request")
 
@@ -54,28 +48,20 @@ class ConnectionFactory:
         with self.get_connection() as connection:
             self.__channel.basic_consume(
                 queue=self.__queue_name,
-                on_message_callback=ConnectionFactory.get_callback,
+                on_message_callback=self.get_callback,
             )
             print(" [*] Waiting for messages. To exit press CTRL+C")
             self.__channel.start_consuming()
 
-    @staticmethod
     def get_callback(
+        self,
         ch: BlockingChannel,
         method: Basic.Deliver,
         properties: BasicProperties,
         body: bytes,
     ) -> None:
-        email_data = json.loads(body)
-        send_email.delay(
-            email_data["to_email"],
-            email_data["subject"],
-            {
-                "title": email_data["subject"],
-                "message": email_data["message"],
-                "logo_url": email_data["logo_url"],
-            },
-        )
+        print(f" [x] Received {body}")
+        self.__callback(json.loads(body))
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def close(self) -> None:
