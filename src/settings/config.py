@@ -1,15 +1,8 @@
-import os
 from typing import Literal
 
 from celery import Celery
-from dotenv import load_dotenv
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-# Явно указываем путь к файлу .env
-dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
-load_dotenv(dotenv_path)
-print(f"Загружен .env файл по пути: {dotenv_path}")
 
 
 class BaseSettingsBase(BaseSettings):
@@ -65,8 +58,10 @@ class SendgridConfig(BaseSettingsBase):
 
 
 class Settings(BaseSettingsBase):
+    environment: Literal["dev", "prod"] = "dev"
     enable_logging: bool = True
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+    log_directory: str = "./logs"
     media_path: str | None = "./media"
     templates_path: str | None = "./templates"
     run: RunConfig = RunConfig()
