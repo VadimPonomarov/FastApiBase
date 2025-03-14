@@ -5,9 +5,8 @@ services:
     image: rabbitmq:management-alpine
     hostname: rabbitmq
     restart: always
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+    env_file:
+      - ./src/.env
     volumes:
       - rabbitmq:/var/lib/rabbitmq
     ports:
@@ -21,21 +20,32 @@ services:
       - ./src:/app
     env_file:
       - ./src/.env
-    restart: on-failure
-    depends_on: 
+    restart: always
+    depends_on:
       - rabbitmq
     command: >
-      sh -c "celery -A celery_config worker -l info -P solo "
+      sh -c "celery -A celery_config worker -l info"
 
   flower:
     image: mher/flower:0.9.7
     restart: on-failure
-    depends_on: 
+    depends_on:
       - rabbitmq
       - celery
     ports:
       - "5555:5555"
     command: ["flower", "--broker=pyamqp://guest:guest@rabbitmq:5672//", "--port=5555"]
+
+  fastapi:
+    build:
+      context: .
+    volumes:
+      - ./src:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - rabbitmq
+      - celery
 
 volumes:
   rabbitmq:
