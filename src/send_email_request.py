@@ -1,7 +1,6 @@
 from pika import ConnectionParameters
 
-from core.schemas.email import MyTemplateData
-from services.mail_services import SendEmailParams
+from core.schemas.email import MyTemplateData, SendEmailParams
 from services.pika_helper import ConnectionFactory
 
 if __name__ == "__main__":

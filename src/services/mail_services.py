@@ -2,25 +2,16 @@ from base64 import b64encode
 
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader
-from pydantic import BaseModel
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Attachment, Mail
 
 from celery_config import celery_app
-from core.schemas.email import MyTemplateData
 from settings.config import settings
 
 load_dotenv()
 
 template_loader = FileSystemLoader(searchpath="./templates")
 env = Environment(loader=template_loader, autoescape=True)
-
-
-class SendEmailParams(BaseModel):
-    from_email: str = settings.sendgrid.my_email
-    to_email: str = settings.sendgrid.my_email
-    subject: str = "Subject"
-    template_data: MyTemplateData
 
 
 @celery_app.task(name="send_email_task")

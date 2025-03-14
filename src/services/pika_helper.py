@@ -6,7 +6,8 @@ from pika.adapters.blocking_connection import BlockingChannel, BlockingConnectio
 from pika.spec import Basic
 
 from core.enums.pika import ExchangeType, QueueType
-from services.mail_services import SendEmailParams
+from core.schemas.email import SendEmailParams
+from settings.logger_config import logger
 
 if TYPE_CHECKING:
     from pika.connection import ConnectionParameters
@@ -42,7 +43,7 @@ class ConnectionFactory:
                 routing_key=self.__queue_name,
                 body=params.model_dump_json().encode("utf-8"),
             )
-            print(" [x] Sent email request")
+            logger.info(" [x] Sent email request")
 
     def consume(self) -> None:
         with self.get_connection() as connection:
@@ -50,7 +51,7 @@ class ConnectionFactory:
                 queue=self.__queue_name,
                 on_message_callback=self.get_callback,
             )
-            print(" [*] Waiting for messages. To exit press CTRL+C")
+            logger.warning(" [*] Waiting for messages. To exit press CTRL+C")
             self.__channel.start_consuming()
 
     def get_callback(
@@ -61,8 +62,8 @@ class ConnectionFactory:
         body: bytes,
     ) -> None:
         body = json.loads(body.decode("utf-8"))
-        cb_params = SendEmailParams.model_dump(body)
-        print(f" [x] Received {body}")
+        cb_params = SendEmailParams(**body).model_dump()
+        logger.info(f" [x] Received {body}")
         self.__callback(**cb_params)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 

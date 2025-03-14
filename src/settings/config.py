@@ -1,4 +1,5 @@
 import os
+from typing import Literal
 
 from celery import Celery
 from dotenv import load_dotenv
@@ -64,6 +65,8 @@ class SendgridConfig(BaseSettingsBase):
 
 
 class Settings(BaseSettingsBase):
+    enable_logging: bool = True
+    log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
     media_path: str | None = "./media"
     templates_path: str | None = "./templates"
     run: RunConfig = RunConfig()
