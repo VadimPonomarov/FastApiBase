@@ -25,7 +25,7 @@ services:
     depends_on: 
       - rabbitmq
     command: >
-      sh -c "celery -A settings.celery.celery_config worker -l info -P "
+      sh -c "celery -A celery_config worker -l info -P solo "
 
   flower:
     image: mher/flower:0.9.7
