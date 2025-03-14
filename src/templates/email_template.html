@@ -15,6 +15,9 @@
         .container {
             width: 100%;
             max-width: 600px;
+            display: flex;
+            flex-wrap: wrap;
+            border: 4px solid #ddd;
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
@@ -23,18 +26,27 @@
         .logo {
             text-align: center;
             margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
         }
         .logo img {
-            width: 150px;
+            max-width: 100px;
         }
-        h1 {
+        h3 {
             color: #4CAF50;
-            text-align: center;
+            text-align: left;
         }
         p {
             font-size: 16px;
             line-height: 1.6;
             margin-bottom: 20px;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -43,8 +55,13 @@
         <div class="logo">
             <img src="cid:logo" alt="Logo">
         </div>
-        <h1>{{ title }}</h1>
-        <p>{{ message }}</p>
+        <div>
+            <h3>{{ title }}</h3>
+        </div>
+        <div>
+            <p>{{ message | safe }}</p>
+        </div>
     </div>
 </body>
 </html>
+

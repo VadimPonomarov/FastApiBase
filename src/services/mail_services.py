@@ -20,6 +20,7 @@ def send_email(
 ) -> None:
     template = env.get_template("email_template.html")
     html_content = template.render(template_data)
+    print(html_content)
 
     with open(
         "./media/indonesian_halal_logo_2022.jpg",

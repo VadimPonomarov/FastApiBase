@@ -13,4 +13,4 @@ class SendEmailParams(BaseModel):
     from_email: str = settings.sendgrid.my_email
     to_email: str = settings.sendgrid.my_email
     subject: str = "Subject"
-    template_data: BaseModel
+    template_data: dict[str, str]
