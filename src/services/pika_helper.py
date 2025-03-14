@@ -65,6 +65,7 @@ class ConnectionFactory:
         cb_params = SendEmailParams(**body).model_dump()
         logger.info(f" [x] Received {body}")
         self.__callback(**cb_params)
+        logger.info(f" [x] Sent to {body['to_email']}")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def close(self) -> None:

@@ -1,12 +1,21 @@
+import os
+
 from loguru import logger
 
 from settings.config import settings
 
-ENABLE_LOGGING = settings.enable_logging
+log_directory = settings.log_directory
+os.makedirs(log_directory, exist_ok=True)
 
-if ENABLE_LOGGING:
-    logger.add(sink="console", level=settings.log_level or "DEBUG")
+if settings.enable_logging:
+    logger.add(
+        os.path.join(log_directory, "app.log"),
+        level=settings.log_level or "DEBUG",
+        format="{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}",
+        rotation="10 MB",
+        compression="zip",
+    )
 else:
-    logger.remove()
+    logger.disable("loguru")
 
 __all__ = ["logger"]
