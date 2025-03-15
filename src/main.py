@@ -16,8 +16,12 @@ app = FastAPI()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    consumer_task = asyncio.create_task(start_consumer())
-    logger.info("Starting rabbitmq consumer  ...")
+    consumer_task = None
+
+    if settings.run.docker:
+        logger.info("Starting RabbitMQ consumer...")
+        consumer_task = asyncio.create_task(start_consumer())
+
     yield
 
     if consumer_task:
@@ -25,7 +29,8 @@ async def lifespan(app: FastAPI):
         try:
             await consumer_task
         except asyncio.CancelledError:
-            pass
+            logger.info("RabbitMQ consumer task cancelled successfully.")
+
     logger.info("Application shutdown completed.")
 
 
@@ -46,7 +51,5 @@ main_app = FastAPI(lifespan=lifespan, default_response_class=ORJSONResponse)
 if __name__ == "__main__":
     uvicorn.run(
         app="main:main_app",
-        host=settings.run.host,
-        port=settings.run.port,
         reload=True,
     )

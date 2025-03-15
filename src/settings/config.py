@@ -20,6 +20,7 @@ class BaseSettingsBase(BaseSettings):
 class RunConfig(BaseSettingsBase):
     host: str = Field(default="localhost")
     port: int = Field(default=8000)
+    docker: bool | None = None
 
 
 class ApiPrefix(BaseSettingsBase):

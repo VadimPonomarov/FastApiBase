@@ -1,16 +1,19 @@
 services:
   mailing:
     build: .
+    environment:
+      - APP_CONFIG__DOCKER=True
     env_file:
       - ./src/.env
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       - rabbitmq
-    command: >
-      sh -c "python main.py"
     volumes:
       - ./src:/app
+    command: >
+      sh -c "uvicorn main:main_app --host 0.0.0.0 --port 8000"
+
 
   rabbitmq:
     image: rabbitmq:management-alpine
