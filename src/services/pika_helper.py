@@ -46,13 +46,16 @@ class ConnectionFactory:
             logger.info(" [x] Sent email request")
 
     def consume(self) -> None:
-        with self.get_connection() as connection:
-            self.__channel.basic_consume(
-                queue=self.__queue_name,
-                on_message_callback=self.get_callback,
-            )
-            logger.warning(" [*] Waiting for messages. To exit press CTRL+C")
-            self.__channel.start_consuming()
+        try:
+            with self.get_connection() as connection:
+                self.__channel.basic_consume(
+                    queue=self.__queue_name,
+                    on_message_callback=self.get_callback,
+                )
+                logger.info(" [*] Waiting for messages")
+                self.__channel.start_consuming()
+        except Exception as e:
+            logger.error(f"Error in consume(): {e}")
 
     def get_callback(
         self,

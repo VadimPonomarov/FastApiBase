@@ -5,7 +5,7 @@ from services.pika_helper import ConnectionFactory
 
 if __name__ == "__main__":
     connection = ConnectionFactory(
-        pika.ConnectionParameters("localhost"),
+        pika.ConnectionParameters("rabbitmq"),
         "email_queue",
         callback=lambda *args, **kwargs: send_email.delay(*args, **kwargs),
     )

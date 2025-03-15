@@ -1,6 +1,17 @@
-version: '3.8'
-
 services:
+  mailing:
+    build: .
+    env_file:
+      - ./src/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+    command: >
+      sh -c "python main.py"
+    volumes:
+      - ./src:/app
+
   rabbitmq:
     image: rabbitmq:management-alpine
     hostname: rabbitmq
@@ -12,6 +23,7 @@ services:
     ports:
       - 15672:15672
       - 5672:5672
+
 
   celery:
     build:
@@ -35,17 +47,6 @@ services:
     ports:
       - "5555:5555"
     command: ["flower", "--broker=pyamqp://guest:guest@rabbitmq:5672//", "--port=5555"]
-
-  fastapi:
-    build:
-      context: .
-    volumes:
-      - ./src:/app
-    ports:
-      - 8000:8000
-    depends_on:
-      - rabbitmq
-      - celery
 
 volumes:
   rabbitmq:

@@ -52,6 +52,10 @@ class CeleryConfig(BaseSettingsBase):
         return celery_app
 
 
+class PikaConfig(BaseSettingsBase):
+    connection_param: str | None = None
+
+
 class SendgridConfig(BaseSettingsBase):
     api_key: str | None = None
     my_email: str | None = None
@@ -68,6 +72,7 @@ class Settings(BaseSettingsBase):
     api: ApiPrefix = ApiPrefix()
     celery_app: CeleryConfig = CeleryConfig()
     sendgrid: SendgridConfig = SendgridConfig()
+    pika: PikaConfig = PikaConfig()
 
 
 settings = Settings()
